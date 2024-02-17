@@ -17,11 +17,20 @@ app.add_url_rule("/end_session", endpoint="end_session")
 @app.endpoint("start_session")
 def start_session():
     sessionId = uuid4()
+    # request memory/start session
     return sessionId
+
+
+@app.endpoint("add_text")
+def add_text(guid: str, text: str):
+    # add text to memory
+    if isinstance(guid, str) and isinstance(text, str):
+        return guid
 
 
 @app.endpoint("end_session")
 def end_session(guid: str):
+    # return all text pulled from memory/end session
     return isinstance(guid, str)
 
 
