@@ -19,8 +19,7 @@ def fetch_config() -> utils.ConfigSchema | None:
         # file does not exist
         print(exc)
         with open(abs_file_path, "w") as stream:
-            defaultConfig = yaml.safe_load(utils.defaultConfig)
-            yaml.dump(defaultConfig, stream)
+            yaml.dump(utils.defaultConfig, stream)
             config = utils.defaultConfig
     except Exception as exc:
         print(exc)  # yaml fails or schema does not validate
