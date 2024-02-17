@@ -8,4 +8,4 @@ class Server(TypedDict):
 
 class ConfigSchema(TypedDict):
     server: Server
-    secret_key: int
+    secret_key: int  # v4 guid as int
