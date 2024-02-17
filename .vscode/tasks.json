@@ -1,0 +1,6 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // TODO: Add tasks to build .venv plus install pip packages required
+    ]
+}
