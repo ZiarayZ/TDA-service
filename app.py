@@ -4,17 +4,25 @@ from src.config.config import fetch_config
 
 config = fetch_config()
 app = Flask(__name__)
-app.add_url_rule("/test", endpoint="test")
 # set secret key
 if config != None:
     app.secret_key = UUID(int=config["secret_key"]).bytes
 else:
     app.secret_key = uuid4().bytes
 
+app.add_url_rule("/start_session", endpoint="start_session")
+app.add_url_rule("/end_session", endpoint="end_session")
 
-@app.endpoint("test")
-def session(guid: str):
-    return guid
+
+@app.endpoint("start_session")
+def start_session():
+    sessionId = uuid4()
+    return sessionId
+
+
+@app.endpoint("end_session")
+def end_session(guid: str):
+    return isinstance(guid, str)
 
 
 @app.route("/")
