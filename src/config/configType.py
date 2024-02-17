@@ -8,7 +8,4 @@ class Server(TypedDict):
 
 class ConfigSchema(TypedDict):
     server: Server
-
-
-defaultServer = Server(host="0.0.0.0", port=5000)
-defaultConfig = ConfigSchema(server=defaultServer)
+    secret_key: int
