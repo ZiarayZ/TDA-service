@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.add_url_rule("/test", endpoint="test")
 # set secret key
 if config != None:
-    app.secret_key = UUID(int=config["secret_key"])
+    app.secret_key = UUID(int=config["secret_key"]).bytes
 else:
     app.secret_key = uuid4().bytes
 
