@@ -1,4 +1,5 @@
 import src.config.utils as utils
+from schema import Schema, Use
 import yaml
 import os
 
@@ -7,14 +8,14 @@ def fetch_config() -> utils.ConfigSchema | None:
     config = None
     script_dir = os.path.dirname(__file__)
     abs_file_path = os.path.join(script_dir, "config.yml")
+
     try:
         with open(abs_file_path, "r") as stream:
-            configData = yaml.load(stream)
-            # time to cast config to JSON object
-            if isinstance(configData, utils.ConfigSchema):
-                config = configData
-            else:
-                raise OSError("Config not an instance of ConfigSchema")
+            configData = yaml.safe_load(stream)
+            # time to cast config to TypedDict
+            schema = Schema(Use(utils.ConfigSchema))
+            schema.validate(configData)
+            config = configData
     except OSError as exc:
         # file does not exist
         print(exc)
