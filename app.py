@@ -36,12 +36,8 @@ def start_session():
             guid = request.json.get("guid", None)
             if isinstance(guid, str) is False:
                 guid = uuid4().hex  # generate one for them
-            if "user" in session:
-                sessionId = session["user"]
-                if sessionId == guid:
-                    guid = uuid4().hex  # duplicate guid try again
-            else:
-                guid = uuid4().hex
+            if "user" in session and session["user"] == guid:
+                guid = uuid4().hex  # duplicate guid try again
             session["user"] = guid
             session["text"] = []
             # request memory/start session
