@@ -20,7 +20,9 @@
 From there, you should be able to make POST requests to the server on the assigned port (default: 0.0.0.0:5000)  
 /start_session
 - `{"guid"?: str}` -> `{"guid": str}`
+
 /add_text
 - `{"guid": str, "text": Any}` -> `{"text": Any}`
+
 /end_session
 - `{"guid": str}` -> `{"text": List[Any]}`
