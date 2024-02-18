@@ -54,9 +54,9 @@ def add_text():
                     session["text"] = sessionText
                 else:
                     session["text"] = [text]
-                return {"guid": guid, "text": text}
+                return {"text": text}
             else:
-                app.logger.debug(f"invalid user: {guid}")
+                raise IndexError(f"invalid user: {guid}")
         else:
             raise ConnectionRefusedError(f"invalid request method")
     except Exception as exc:
@@ -71,13 +71,15 @@ def end_session():
             # return all text pulled from memory/end session
             if isinstance(guid, str):
                 if "user" in session and session["user"] == guid:
-                    session.clear()
-                    return True
+                    if "text" in session:
+                        session.clear()
+                        return {"text": session["text"]}
+                    else:
+                        raise IndexError("missing text")
                 else:
-                    app.logger.debug(f"invalid user: {guid}")
+                    raise IndexError(f"invalid user: {guid}")
             else:
-                app.logger.warning(f"invalid type, user: {guid}")
-            # FIXME: return possible exceptions that Jira or Slack can handle
+                raise TypeError(f"invalid type, user: {guid}")
         else:
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
