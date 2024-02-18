@@ -28,6 +28,7 @@ def add_text(guid: str, text: str):
     # add text to memory
     if isinstance(guid, str) and isinstance(text, str):
         if "user" in session and session["user"] == guid:
+            session.pop("user")
             return guid
 
 
