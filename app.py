@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from uuid import uuid4, UUID
 from src.config.config import fetch_config
 
@@ -18,6 +18,7 @@ app.add_url_rule("/end_session", endpoint="end_session")
 @app.endpoint("start_session")
 def start_session():
     sessionId = uuid4()
+    session["user"] = sessionId
     # request memory/start session
     return sessionId
 
@@ -26,13 +27,16 @@ def start_session():
 def add_text(guid: str, text: str):
     # add text to memory
     if isinstance(guid, str) and isinstance(text, str):
-        return guid
+        if "user" in session and session["user"] == guid:
+            return guid
 
 
 @app.endpoint("end_session")
 def end_session(guid: str):
     # return all text pulled from memory/end session
-    return isinstance(guid, str)
+    if isinstance(guid, str):
+        if "user" in session and session["user"] == guid:
+            return True
 
 
 @app.route("/")
