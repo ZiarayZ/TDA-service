@@ -33,6 +33,7 @@ def add_text(guid: str, text: str):
             app.logger.debug(f"invalid user: {guid}")
     else:
         app.logger.warning(f"invalid type, user: {guid}, text: {text}")
+    # FIXME: return possible exceptions that Jira or Slack can handle
 
 
 @app.endpoint("end_session")
@@ -46,6 +47,7 @@ def end_session(guid: str):
             app.logger.debug(f"invalid user: {guid}")
     else:
         app.logger.warning(f"invalid type, user: {guid}")
+    # FIXME: return possible exceptions that Jira or Slack can handle
 
 
 @app.route("/")
