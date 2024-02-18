@@ -37,7 +37,7 @@ def end_session(guid: str):
 
 @app.route("/")
 def index():
-    return "<p>Call endpoint /test</p>"
+    return "<p>Call endpoint /start_session</p><p>Call endpoint /add_text as many times as needed</p><p>Call endpoint /end_session</p>"
 
 
 if __name__ == "__main__" and config != None:
