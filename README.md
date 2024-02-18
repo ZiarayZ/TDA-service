@@ -9,9 +9,10 @@
 # Quickstart Guide
 
 - Have python installed
-- Create a venv (virtual environment)
-- `.venv/Scripts/Activate.ps1` (might need to mess with permissions to allow this)
-- `pip install Flask pyyaml waitress`
-- `deactivate`
+- Create a venv (virtual environment):
+    - `python -m venv .venv`
+    - `.venv/Scripts/Activate.ps1` (might get stopped by windows' execution policy)
+    - `pip install Flask pyyaml waitress`
+    - `deactivate`
 - Ensure that the python path points to your venv
 - Run app.py
