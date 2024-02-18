@@ -1,7 +1,7 @@
 from flask import Flask, session, request, json
 from werkzeug.exceptions import HTTPException
 from uuid import uuid4, UUID
-from src.config.config import fetch_config
+from config.config import fetch_config
 
 config = fetch_config()
 app = Flask(__name__)
