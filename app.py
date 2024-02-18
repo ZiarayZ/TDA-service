@@ -15,10 +15,12 @@ else:
 def start_session():
     try:
         if request.method == "POST":
-            sessionId = uuid4().hex
-            session["user"] = sessionId
+            guid = request.json.get("guid", None)
+            if isinstance(guid, str) is False:
+                guid = uuid4().hex  # generate one for them
+            session["user"] = guid
             # request memory/start session
-            return {"guid": sessionId}
+            return {"guid": guid}
         else:
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
