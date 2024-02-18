@@ -1,5 +1,4 @@
-from src.config.configType import ConfigSchema
-from uuid import uuid4
+from src.config.configType import ConfigSchema, fetch_default
 import yaml
 import os
 
@@ -24,23 +23,18 @@ def fetch_config() -> ConfigSchema | None:
         # file does not exist, or file is missing some fields
         print(exc)
         with open(abs_file_path, "w") as stream:
-            defaultConfig = ConfigSchema(
-                {
-                    "server": {"host": "0.0.0.0", "port": 5000},
-                    "secret_key": uuid4().int,
-                }
-            )
+            defaultConfig = fetch_default("configschema")
             yaml.dump(defaultConfig, stream)
             config = defaultConfig
     return config
 
 
-def validate(typ: ConfigSchema, instance: ConfigSchema):
+def validate(typ, instance):
     for property_name, property_type in typ.__annotations__.items():
         value = instance.get(property_name, None)
         if value is None:
             # Check for missing keys
-            raise IndexError(f"Missing key: {property_name}")
+            instance[property_name] = fetch_default(property_name)
         elif property_type not in (int, float, bool, str):  # simple types
             # check if property_type is object (e.g. not a primitive)
             validate(property_type, value)
