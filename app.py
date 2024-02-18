@@ -17,7 +17,7 @@ app.add_url_rule("/end_session", endpoint="end_session")
 
 @app.endpoint("start_session")
 def start_session():
-    sessionId = uuid4()
+    sessionId = uuid4().hex
     session["user"] = sessionId
     # request memory/start session
     return sessionId
@@ -29,6 +29,10 @@ def add_text(guid: str, text: str):
     if isinstance(guid, str) and isinstance(text, str):
         if "user" in session and session["user"] == guid:
             return guid
+        else:
+            app.logger.debug(f"invalid user: {guid}")
+    else:
+        app.logger.warning(f"invalid type, user: {guid}, text: {text}")
 
 
 @app.endpoint("end_session")
@@ -38,6 +42,10 @@ def end_session(guid: str):
         if "user" in session and session["user"] == guid:
             session.pop("user")
             return True
+        else:
+            app.logger.debug(f"invalid user: {guid}")
+    else:
+        app.logger.warning(f"invalid type, user: {guid}")
 
 
 @app.route("/")
