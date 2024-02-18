@@ -32,14 +32,18 @@ def add_text():
             guid = request.json.get("guid", None)
             text = request.json.get("text", None)
             # add text to memory
-            if isinstance(guid, str) and isinstance(text, str):
-                if "user" in session and session["user"] == guid:
-                    return {"guid": guid, "text": text}
-                else:
-                    app.logger.debug(f"invalid user: {guid}")
+            error = ""
+            if isinstance(guid, str) is False:
+                error += f", user: {guid}"
+            if isinstance(text, str) is False:
+                error += f", text: {text}"
+            if len(error) != 0:
+                raise TypeError(f"invalid type{error}")
+
+            if "user" in session and session["user"] == guid:
+                return {"guid": guid, "text": text}
             else:
-                app.logger.warning(f"invalid type, user: {guid}, text: {text}")
-            # FIXME: return possible exceptions that Jira or Slack can handle
+                app.logger.debug(f"invalid user: {guid}")
         else:
             raise ConnectionRefusedError(f"invalid request method")
     except Exception as exc:
