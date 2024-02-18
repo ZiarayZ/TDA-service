@@ -8,7 +8,7 @@
 
 # Quickstart Guide
 
-- Have python installed
+- Have python and pip installed
 - Create a venv (virtual environment):
     - `python -m venv .venv`
     - `.venv/Scripts/Activate.ps1` (might get stopped by windows' execution policy)
