@@ -1,9 +1,7 @@
 from flask import Flask, session, request, json
 from werkzeug.exceptions import HTTPException
 from uuid import uuid4, UUID
-
 from src.config.config import fetch_config
-from src.errors import InternalServerError
 
 config = fetch_config()
 app = Flask(__name__)
@@ -52,7 +50,7 @@ def start_session():
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
         app.logger.error(exc)
-        raise InternalServerError(exc)
+        raise HTTPException(exc)
 
 
 @app.route("/add_text", methods=["POST"])
@@ -85,7 +83,7 @@ def add_text():
             raise ConnectionRefusedError(f"invalid request method")
     except Exception as exc:
         app.logger.error(exc)
-        raise InternalServerError(exc)
+        raise HTTPException(exc)
 
 
 @app.route("/end_session", methods=["POST"])
@@ -110,7 +108,7 @@ def end_session():
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
         app.logger.error(exc)
-        raise InternalServerError(exc)
+        raise HTTPException(exc)
 
 
 @app.route("/")
