@@ -3,4 +3,3 @@
 - Uses [Flask](https://pypi.org/project/Flask/)
 - Loads config using [PyYAML](https://pypi.org/project/PyYAML/)
 - Uses [waitress](https://pypi.org/project/waitress/)
-- Uses [Werkzeug](https://pypi.org/project/Werkzeug/)
