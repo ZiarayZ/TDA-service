@@ -22,6 +22,7 @@ def start_session():
             if sessionId == guid:
                 guid = uuid4().hex  # duplicate guid try again
             session["user"] = guid
+            session["text"] = []
             # request memory/start session
             return {"guid": guid}
         else:
@@ -40,12 +41,19 @@ def add_text():
             error = ""
             if isinstance(guid, str) is False:
                 error += f", user: {guid}"
-            if isinstance(text, str) is False:
+            if text is None:
                 error += f", text: {text}"
             if len(error) != 0:
                 raise TypeError(f"invalid type{error}")
 
             if "user" in session and session["user"] == guid:
+                if "text" in session:
+                    sessionText = session["text"]
+                    if isinstance(sessionText, list):
+                        sessionText.append(text)
+                    session["text"] = sessionText
+                else:
+                    session["text"] = [text]
                 return {"guid": guid, "text": text}
             else:
                 app.logger.debug(f"invalid user: {guid}")
