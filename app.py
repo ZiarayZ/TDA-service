@@ -63,7 +63,7 @@ def end_session():
             # return all text pulled from memory/end session
             if isinstance(guid, str):
                 if "user" in session and session["user"] == guid:
-                    session.pop("user")
+                    session.clear()
                     return True
                 else:
                     app.logger.debug(f"invalid user: {guid}")
