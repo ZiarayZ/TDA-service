@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, session, request
 from uuid import uuid4, UUID
 from src.config.config import fetch_config
 
@@ -10,44 +10,61 @@ if config != None:
 else:
     app.secret_key = uuid4().bytes
 
-app.add_url_rule("/start_session", endpoint="start_session")
-app.add_url_rule("/add_text", endpoint="add_text")
-app.add_url_rule("/end_session", endpoint="end_session")
 
-
-@app.endpoint("start_session")
+@app.route("/start_session", methods=["POST"])
 def start_session():
-    sessionId = uuid4().hex
-    session["user"] = sessionId
-    # request memory/start session
-    return sessionId
-
-
-@app.endpoint("add_text")
-def add_text(guid: str, text: str):
-    # add text to memory
-    if isinstance(guid, str) and isinstance(text, str):
-        if "user" in session and session["user"] == guid:
-            return guid
+    try:
+        if request.method == "POST":
+            sessionId = uuid4().hex
+            session["user"] = sessionId
+            # request memory/start session
+            return {"guid": sessionId}
         else:
-            app.logger.debug(f"invalid user: {guid}")
-    else:
-        app.logger.warning(f"invalid type, user: {guid}, text: {text}")
-    # FIXME: return possible exceptions that Jira or Slack can handle
+            raise ConnectionRefusedError("invalid request method")
+    except Exception as exc:
+        app.logger.error(exc)
 
 
-@app.endpoint("end_session")
-def end_session(guid: str):
-    # return all text pulled from memory/end session
-    if isinstance(guid, str):
-        if "user" in session and session["user"] == guid:
-            session.pop("user")
-            return True
+@app.route("/add_text", methods=["POST"])
+def add_text():
+    try:
+        if request.method == "POST":
+            guid = request.json.get("guid", None)
+            text = request.json.get("text", None)
+            # add text to memory
+            if isinstance(guid, str) and isinstance(text, str):
+                if "user" in session and session["user"] == guid:
+                    return {"guid": guid, "text": text}
+                else:
+                    app.logger.debug(f"invalid user: {guid}")
+            else:
+                app.logger.warning(f"invalid type, user: {guid}, text: {text}")
+            # FIXME: return possible exceptions that Jira or Slack can handle
         else:
-            app.logger.debug(f"invalid user: {guid}")
-    else:
-        app.logger.warning(f"invalid type, user: {guid}")
-    # FIXME: return possible exceptions that Jira or Slack can handle
+            raise ConnectionRefusedError(f"invalid request method")
+    except Exception as exc:
+        app.logger.error(exc)
+
+
+@app.route("/end_session", methods=["POST"])
+def end_session():
+    try:
+        if request.method == "POST":
+            guid = request.json.get("guid", None)
+            # return all text pulled from memory/end session
+            if isinstance(guid, str):
+                if "user" in session and session["user"] == guid:
+                    session.pop("user")
+                    return True
+                else:
+                    app.logger.debug(f"invalid user: {guid}")
+            else:
+                app.logger.warning(f"invalid type, user: {guid}")
+            # FIXME: return possible exceptions that Jira or Slack can handle
+        else:
+            raise ConnectionRefusedError("invalid request method")
+    except Exception as exc:
+        app.logger.error(exc)
 
 
 @app.route("/")
