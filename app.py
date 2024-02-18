@@ -34,10 +34,13 @@ def start_session():
     try:
         if request.method == "POST":
             guid = request.json.get("guid", None)
-            if isinstance(guid, str) is False:
-                guid = uuid4().hex  # generate one for them
-            if "user" in session and session["user"] == guid:
-                guid = uuid4().hex  # duplicate guid try again
+            # guid does not exist, or is invalid type
+            if isinstance(guid, str) is False or (
+                # duplicate guid
+                "user" in session
+                and session["user"] == guid
+            ):
+                guid = uuid4().hex
             session["user"] = guid
             session["text"] = []
             # request memory/start session
