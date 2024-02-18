@@ -18,6 +18,7 @@
 - Run app.py
 
 From there, you should be able to make POST requests to the server on the assigned port (default: 0.0.0.0:5000)  
+  
 /start_session
 - `{"guid"?: str}` -> `{"guid": str}`
 
