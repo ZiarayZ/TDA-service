@@ -11,6 +11,7 @@ else:
     app.secret_key = uuid4().bytes
 
 app.add_url_rule("/start_session", endpoint="start_session")
+app.add_url_rule("/add_text", endpoint="add_text")
 app.add_url_rule("/end_session", endpoint="end_session")
 
 
