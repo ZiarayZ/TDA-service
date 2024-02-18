@@ -1,6 +1,9 @@
-from flask import Flask, session, request
+from flask import Flask, session, request, json
+from werkzeug.exceptions import HTTPException
 from uuid import uuid4, UUID
+
 from src.config.config import fetch_config
+from src.errors import InternalServerError
 
 config = fetch_config()
 app = Flask(__name__)
@@ -11,6 +14,23 @@ else:
     app.secret_key = uuid4().bytes
 
 
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps(
+        {
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        }
+    )
+    response.content_type = "application/json"
+    return response
+
+
 @app.route("/start_session", methods=["POST"])
 def start_session():
     try:
@@ -18,9 +38,12 @@ def start_session():
             guid = request.json.get("guid", None)
             if isinstance(guid, str) is False:
                 guid = uuid4().hex  # generate one for them
-            sessionId = session["user"]
-            if sessionId == guid:
-                guid = uuid4().hex  # duplicate guid try again
+            if "user" in session:
+                sessionId = session["user"]
+                if sessionId == guid:
+                    guid = uuid4().hex  # duplicate guid try again
+            else:
+                guid = uuid4().hex
             session["user"] = guid
             session["text"] = []
             # request memory/start session
@@ -29,6 +52,7 @@ def start_session():
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
         app.logger.error(exc)
+        raise InternalServerError(exc)
 
 
 @app.route("/add_text", methods=["POST"])
@@ -61,6 +85,7 @@ def add_text():
             raise ConnectionRefusedError(f"invalid request method")
     except Exception as exc:
         app.logger.error(exc)
+        raise InternalServerError(exc)
 
 
 @app.route("/end_session", methods=["POST"])
@@ -72,8 +97,9 @@ def end_session():
             if isinstance(guid, str):
                 if "user" in session and session["user"] == guid:
                     if "text" in session:
+                        text = session["text"]
                         session.clear()
-                        return {"text": session["text"]}
+                        return {"text": text}
                     else:
                         raise IndexError("missing text")
                 else:
@@ -84,6 +110,7 @@ def end_session():
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
         app.logger.error(exc)
+        raise InternalServerError(exc)
 
 
 @app.route("/")
@@ -94,4 +121,5 @@ def index():
 if __name__ == "__main__" and config != None:
     from waitress import serve
 
+    app.debug = True
     serve(app, host=config["server"]["host"], port=config["server"]["port"])
