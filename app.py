@@ -29,55 +29,25 @@ def handle_exception(e):
     return response
 
 
-@app.route("/start_session", methods=["POST"])
-def start_session():
-    try:
-        if request.method == "POST":
-            guid = request.json.get("guid", None)
-            # guid does not exist, or is invalid type
-            if isinstance(guid, str) is False or (
-                # duplicate guid
-                "user" in session
-                and session["user"] == guid
-            ):
-                guid = uuid4().hex
-            session["user"] = guid
-            session["text"] = []
-            # request memory/start session
-            return {"guid": guid}
-        else:
-            raise ConnectionRefusedError("invalid request method")
-    except Exception as exc:
-        app.logger.error(exc)
-        raise HTTPException(exc)
-
-
 @app.route("/add_text", methods=["POST"])
 def add_text():
     try:
         if request.method == "POST":
-            guid = request.json.get("guid", None)
             text = request.json.get("text", None)
             # add text to memory
             error = ""
-            if isinstance(guid, str) is False:
-                error += f", user: {guid}"
             if text is None:
                 error += f", text: {text}"
             if len(error) != 0:
                 raise TypeError(f"invalid type{error}")
-
-            if "user" in session and session["user"] == guid:
-                if "text" in session:
-                    sessionText = session["text"]
-                    if isinstance(sessionText, list):
-                        sessionText.append(text)
-                    session["text"] = sessionText
-                else:
-                    session["text"] = [text]
-                return {"text": text}
+            if "text" in session:
+                sessionText = session["text"]
+                if isinstance(sessionText, list):
+                    sessionText.append(text)
+                session["text"] = sessionText
             else:
-                raise IndexError(f"invalid user: {guid}")
+                session["text"] = [text]
+            return {"success": True}
         else:
             raise ConnectionRefusedError(f"invalid request method")
     except Exception as exc:
@@ -85,8 +55,8 @@ def add_text():
         raise HTTPException(exc)
 
 
-@app.route("/end_session", methods=["POST"])
-def end_session():
+@app.route("/get_text", methods=["POST"])
+def get_text():
     try:
         if request.method == "POST":
             guid = request.json.get("guid", None)
