@@ -59,20 +59,13 @@ def add_text():
 def get_text():
     try:
         if request.method == "POST":
-            guid = request.json.get("guid", None)
             # return all text pulled from memory/end session
-            if isinstance(guid, str):
-                if "user" in session and session["user"] == guid:
-                    if "text" in session:
-                        text = session["text"]
-                        session.clear()
-                        return {"text": text}
-                    else:
-                        raise IndexError("missing text")
-                else:
-                    raise IndexError(f"invalid user: {guid}")
+            if "text" in session:
+                text = session["text"]
+                session.clear()
+                return {"text": text}
             else:
-                raise TypeError(f"invalid type, user: {guid}")
+                raise IndexError("missing text")
         else:
             raise ConnectionRefusedError("invalid request method")
     except Exception as exc:
