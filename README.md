@@ -1,4 +1,5 @@
 # A small service for preparing weekly meetings etc
+Uses Flask sessions to store everything between endpoints
 
 - Built in Python
 - Uses [Flask](https://pypi.org/project/Flask/)
