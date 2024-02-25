@@ -7,7 +7,7 @@ Uses Flask sessions to store everything between endpoints
 - Uses [waitress](https://pypi.org/project/waitress/)
 
 
-# Quickstart Guide
+# Windows Quickstart Guide
 
 - Have python and pip installed
 - Create a venv (virtual environment):
