@@ -38,5 +38,4 @@ def get_text():
 if __name__ == "__main__" and config != None:
     from waitress import serve
 
-    app.debug = True
     serve(app, host=config["server"]["host"], port=config["server"]["port"])
