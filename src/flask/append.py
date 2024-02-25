@@ -16,6 +16,8 @@ def handle_text():
             sessionText = session[guid]
             if isinstance(sessionText, list):
                 sessionText.append(text)
+            else:
+                raise TypeError(f"invalid type, session: {sessionText}")
             session[guid] = sessionText
         else:
             session[guid] = [text]
