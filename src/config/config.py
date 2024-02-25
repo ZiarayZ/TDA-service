@@ -1,4 +1,4 @@
-from config.configType import ConfigSchema, fetch_default
+from src.config.configType import ConfigSchema, fetch_default
 from typing import TypedDict, Any
 import yaml
 import os

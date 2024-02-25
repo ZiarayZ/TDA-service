@@ -21,7 +21,7 @@ Uses Flask sessions to store everything between endpoints
 From there, you should be able to make POST requests to the server on the assigned port (default: 0.0.0.0:5000)  
   
 /add_text
-- `{"text": Any}` -> `{"success": bool}`
+- `{"guid"?: str, "text": Any}` -> `{"guid": str}`
 
 /get_text
-- `{}` -> `{"text": List[Any]}`
+- `{"guid": str}` -> `{"text": List[Any]}`
