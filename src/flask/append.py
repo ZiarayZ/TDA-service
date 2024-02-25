@@ -11,6 +11,7 @@ def handle_text():
         if guid is None:
             guid = uuid4().hex
         # add text to memory
+        new = False
         if guid in session:
             sessionText = session[guid]
             if isinstance(sessionText, list):
@@ -18,7 +19,8 @@ def handle_text():
             session[guid] = sessionText
         else:
             session[guid] = [text]
-        return {"guid": guid}
+            new = True
+        return {"guid": guid, "new_session": new}
     else:
         raise ConnectionRefusedError(f"invalid request method")
 
